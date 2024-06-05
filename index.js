@@ -30,6 +30,7 @@ async function run() {
         await client.connect();
 
         const userCollection = client.db('ProbizDB').collection('users')
+        const paymentCollection = client.db('ProbizDB').collection('payment')
 
         app.post('/users', async (req, res) => {
             const user = req.body
@@ -43,6 +44,7 @@ async function run() {
             const result = await userCollection.insertOne(user)
             res.send(result)
         })
+
 
         app.get('/users', async (req, res) => {
             const email = req.query.email
@@ -78,7 +80,11 @@ async function run() {
             res.send(result)
         })
 
-
+        app.post('/payment', async (req, res) => {
+            const userInfo = req.body
+            const result = await paymentCollection.insertOne(userInfo)
+            res.send(result)
+        })
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
