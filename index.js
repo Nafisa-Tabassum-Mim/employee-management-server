@@ -31,6 +31,7 @@ async function run() {
 
         const userCollection = client.db('ProbizDB').collection('users')
         const paymentCollection = client.db('ProbizDB').collection('payment')
+        const workCollection = client.db('ProbizDB').collection('works')
 
         app.post('/users', async (req, res) => {
             const user = req.body
@@ -75,7 +76,6 @@ async function run() {
         app.patch('/users/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: new ObjectId(id) }
-            // extra i want to just do it. if it's admin then remove it. if it's not admin then make admin.
             const user = await userCollection.findOne(query)
             // console.log(user.role)
             // const newVerification = user.isVerified === 'verified'
@@ -95,6 +95,19 @@ async function run() {
         })
         app.get('/payment', async (req, res) => {
             const result = await paymentCollection.find().toArray()
+            res.send(result)
+        })
+
+        app.get('/payment/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { payId: id };  // Use id directly for matching payId
+            const result = await paymentCollection.find(query).toArray();
+            res.send(result);
+        });
+
+        app.post('/works', async (req, res) => {
+            const workInfo = req.body
+            const result = await workCollection.insertOne(workInfo)
             res.send(result)
         })
 
