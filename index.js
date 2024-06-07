@@ -36,9 +36,9 @@ async function run() {
         app.post('/users', async (req, res) => {
             const user = req.body
             const query = { email: user.email }
-            console.log(query)
+            // console.log(query)
             const userExist = await userCollection.findOne(query)
-            console.log(userExist)
+            // console.log(userExist)
             if (userExist) {
                 return res.send({ message: 'user already exist' })
             }
@@ -60,15 +60,15 @@ async function run() {
                 query = { role: role }
             }
 
-            console.log(query)
+            // console.log(query)
             const result = await userCollection.find(query).toArray()
             res.send(result)
         })
 
-        
-        app.get('/users/:id',async(req,res)=>{
-            const id= req.params.id
-            const query = {_id: new ObjectId(id)}
+
+        app.get('/users/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
             const result = await userCollection.findOne(query)
             res.send(result)
         })
@@ -94,7 +94,15 @@ async function run() {
             res.send(result)
         })
         app.get('/payment', async (req, res) => {
-            const result = await paymentCollection.find().toArray()
+            const email = req.query.email; // Correctly get the email from query parameters
+
+            let query = {}
+            if (email) {
+                query = { email: email };
+            }
+            console.log('queryyyyyy',query)
+
+            const result = await paymentCollection.find(query).toArray()
             res.send(result)
         })
 
@@ -108,6 +116,11 @@ async function run() {
         app.post('/works', async (req, res) => {
             const workInfo = req.body
             const result = await workCollection.insertOne(workInfo)
+            res.send(result)
+        })
+
+        app.get('/works', async (req, res) => {
+            const result = await workCollection.find().toArray()
             res.send(result)
         })
 
