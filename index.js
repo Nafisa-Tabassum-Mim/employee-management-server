@@ -73,20 +73,65 @@ async function run() {
             res.send(result)
         })
 
+        // app.patch('/users/:id', async (req, res) => {
+        //     const id = req.params.id
+        //     const query = { _id: new ObjectId(id) }
+        //     const updateDoc = {
+        //         $set: {
+        //             isVerified: 'verified'
+        //         }
+        //     };
+        //     const result = await userCollection.updateOne(query, updateDoc)
+        //     res.send(result)
+        // })
+        // app.get('/users/hr/:id', async (req, res) => {
+        //     const id = req.params.id
+        //     const query = { _id: new ObjectId(id) }
+        //     const result = await userCollection.findOne(query)
+        //     res.send(result)
+        // })
+        // app.patch('/users/hr/:id', async (req, res) => {
+        //     const id = req.params.id
+        //     const query = { _id: new ObjectId(id) } 
+        //     const updateDoc = {
+        //         $set: {
+        //             designation:'HR',
+        //             role:'HR'
+        //         }
+        //     };
+        //     const result = await userCollection.updateOne(query, updateDoc)
+        //     res.send(result)
+        // })
+
+
         app.patch('/users/:id', async (req, res) => {
-            const id = req.params.id
-            const query = { _id: new ObjectId(id) }
-            const user = await userCollection.findOne(query)
-            // console.log(user.role)
-            // const newVerification = user.isVerified === 'verified'
-            const updateDoc = {
-                $set: {
-                    isVerified: 'verified'
-                }
-            };
-            const result = await userCollection.updateOne(query, updateDoc)
-            res.send(result)
-        })
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+
+            // Find the user
+            const user = await userCollection.findOne(query);
+            if (user.isVerified !== 'verified') {
+                const updateVerifiedDoc = {
+                    $set: {
+                        isVerified: 'verified'
+                    }
+                };
+                const result = await userCollection.updateOne(query, updateVerifiedDoc);
+                res.send(result);
+                return
+            }
+            else {
+                const updateHRDoc = {
+                    $set: {
+                        designation: 'HR',
+                        role: 'HR'
+                    }
+                };
+                const result = await userCollection.updateOne(query, updateHRDoc);
+                res.send(result);
+            }
+        });
+
 
         app.post('/payment', async (req, res) => {
             const userInfo = req.body
@@ -100,7 +145,7 @@ async function run() {
             if (email) {
                 query = { email: email };
             }
-            console.log('queryyyyyy',query)
+            console.log('queryyyyyy', query)
 
             const result = await paymentCollection.find(query).toArray()
             res.send(result)
@@ -120,7 +165,12 @@ async function run() {
         })
 
         app.get('/works', async (req, res) => {
-            const result = await workCollection.find().toArray()
+            const email = req.query.email
+            let query = {}
+            if (email) {
+                query = { email: email }
+            }
+            const result = await workCollection.find(query).toArray()
             res.send(result)
         })
 
