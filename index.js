@@ -12,8 +12,8 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 app.use(cors({
     origin: [
         'http://localhost:5173',
-        // 'https://volunteer-91281.web.app',
-        // 'https://volunteer-91281.firebaseapp.com'
+        'https://employee-management-6dd47.web.app',
+        'https://employee-management-6dd47.firebaseapp.com'
     ],
     credentials: true
 }))
@@ -65,7 +65,7 @@ const cookieOption = {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
 
         const userCollection = client.db('ProbizDB').collection('users')
         const paymentCollection = client.db('ProbizDB').collection('payment')
@@ -251,7 +251,7 @@ async function run() {
 
 
         // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
         // Ensures that the client will close when you finish/error
