@@ -32,6 +32,7 @@ async function run() {
         const userCollection = client.db('ProbizDB').collection('users')
         const paymentCollection = client.db('ProbizDB').collection('payment')
         const workCollection = client.db('ProbizDB').collection('works')
+        const messageCollection = client.db('ProbizDB').collection('message')
 
         app.post('/users', async (req, res) => {
             const user = req.body
@@ -73,35 +74,7 @@ async function run() {
             res.send(result)
         })
 
-        // app.patch('/users/:id', async (req, res) => {
-        //     const id = req.params.id
-        //     const query = { _id: new ObjectId(id) }
-        //     const updateDoc = {
-        //         $set: {
-        //             isVerified: 'verified'
-        //         }
-        //     };
-        //     const result = await userCollection.updateOne(query, updateDoc)
-        //     res.send(result)
-        // })
-        // app.get('/users/hr/:id', async (req, res) => {
-        //     const id = req.params.id
-        //     const query = { _id: new ObjectId(id) }
-        //     const result = await userCollection.findOne(query)
-        //     res.send(result)
-        // })
-        // app.patch('/users/hr/:id', async (req, res) => {
-        //     const id = req.params.id
-        //     const query = { _id: new ObjectId(id) } 
-        //     const updateDoc = {
-        //         $set: {
-        //             designation:'HR',
-        //             role:'HR'
-        //         }
-        //     };
-        //     const result = await userCollection.updateOne(query, updateDoc)
-        //     res.send(result)
-        // })
+
 
 
         app.patch('/users/:id', async (req, res) => {
@@ -129,9 +102,46 @@ async function run() {
                 };
                 const result = await userCollection.updateOne(query, updateHRDoc);
                 res.send(result);
+                return
             }
         });
 
+        app.get('/users/fire/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await userCollection.findOne(query)
+            res.send(result)
+        })
+        app.patch('/users/fire/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const updateFireDoc = {
+                $set: {
+                    isFired: 'Fired',
+                }
+            };
+            const result = await userCollection.updateOne(query, updateFireDoc);
+            res.send(result);
+        });
+        
+        app.get('/users/salary/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await userCollection.findOne(query)
+            res.send(result)
+        })
+        app.patch('/users/salary/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const { salary } = req.body; // Destructure the salary from the request body
+            const updateSalaryDoc = {
+                $set: {
+                    salary: parseFloat(salary) // Ensure salary is parsed as a float
+                }
+            };
+            const result = await userCollection.updateOne(query, updateSalaryDoc);
+            res.send(result);
+        });
 
         app.post('/payment', async (req, res) => {
             const userInfo = req.body
@@ -171,6 +181,16 @@ async function run() {
                 query = { email: email }
             }
             const result = await workCollection.find(query).toArray()
+            res.send(result)
+        })
+        app.post('/message', async (req, res) => {
+            const messageInfo = req.body
+            const result = await messageCollection.insertOne(messageInfo)
+            res.send(result)
+        })
+
+        app.get('/message', async (req, res) => {
+            const result = await messageCollection.find().toArray()
             res.send(result)
         })
 
