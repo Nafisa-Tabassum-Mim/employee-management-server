@@ -223,7 +223,11 @@ async function run() {
             res.send(result);
         });
 
-     
+        app.post('/works', async (req, res) => {
+            const workInfo = req.body
+            const result = await workCollection.insertOne(workInfo)
+            res.send(result)
+        })
 
         app.get('/works', async (req, res) => {
             const email = req.query.email
